@@ -3,35 +3,55 @@ import TodoForm from './TodoForm';
 import Todo from './Todo';
 
 function TodoList() {
+  const [todos, setTodos] = useState([]);
 
-    const[todos,setTodos] = useState([]);
+  const addTodo = todo => {
+    if (!todo.text || /^\s*$/.test(todo.text)) {
+      return;
+    }
 
-    const addTodo = todo => {
-        if (!todo.text || /^\s*$/.test(todo.text)) {
-            return;
-          }
+    const newTodos = [todo, ...todos];
 
-    const newTodos = [todo, ...todos]
     setTodos(newTodos);
+    console.log(...todos);
+  };
+
+  const updateTodo = (todoId, newValue) => {
+    if (!newValue.text || /^\s*$/.test(newValue.text)) {
+      return;
     }
 
-    const completeTodo = id => {
-        let updatedTodos = todos.map(todo => { if (todo.id === id) {
-            todo.isComplete = !todo.isComplete;
-        } return todo;  })
+    setTodos(prev => prev.map(item => (item.id === todoId ? newValue : item)));
+  };
 
-        setTodos(updatedTodos);
-    }
+  const removeTodo = id => {
+    const removedArr = [...todos].filter(todo => todo.id !== id);
 
+    setTodos(removedArr);
+  };
 
-    return (
-        <div>
-            <h1>Bugün Planın Ne?</h1> <br></br>
-            <TodoForm onSubmit={addTodo}/>
-            <Todo todos={todos} completeTodo={completeTodo}/>
-           
-        </div>
-    )
+  const completeTodo = id => {
+    let updatedTodos = todos.map(todo => {
+      if (todo.id === id) {
+        todo.isComplete = !todo.isComplete;
+      }
+      return todo;
+    });
+    setTodos(updatedTodos);
+  };
+
+  return (
+    <>
+      <h1>What's the Plan for Today?</h1>
+      <TodoForm onSubmit={addTodo} />
+      <Todo
+        todos={todos}
+        completeTodo={completeTodo}
+        removeTodo={removeTodo}
+        updateTodo={updateTodo}
+      />
+    </>
+  );
 }
 
-export default TodoList
+export default TodoList;
